@@ -1,12 +1,16 @@
 #ifndef CRACK_H
 #define CRACK_H
+
 #include <iostream>
-#include <stdio.h>
-#include <string>
-#include <cstdint>
-#include "crc32.h"
 #include <fstream>
+#include <string>
+#include <stdio.h>
 #include <ctime>
+#include <string.h>
+#include <cstdint>
+
+#include "crc32.h"
+
 using namespace std;
 
 //predefined value
@@ -18,15 +22,28 @@ using namespace std;
 #define K2 0x34567890UL;
 
 //crackzip class
-class crackzip{
+class crackzip
+{
  public:
-    crackzip();
-    crackzip(string filename,string dict_file);
-    void loadzip(string filename);
-    void open_dict(string dict_file);
+    crackzip(std::string filename,std::string dict_file);
+
+public:
+    void loadzip(std::string filename);
+    void open_dict(std::string dict_file);
     void crackpw();
+
+protected:
+    uint32_t fget_16(FILE *f);
+    uint32_t fget_32(FILE *f);
+    bool get_next_pw();
+    bool check_pw();
+
  private:
-    string filename;
+    std::string filename;
+    std::ifstream dict_f;
+    std::string pw;
+    char zip_name[40];
+
     uint32_t id;
     uint16_t version;
     uint16_t flags;
@@ -38,14 +55,8 @@ class crackzip{
     uint32_t uncompr_size;
     uint16_t name_len;
     uint16_t extra_field_len;
-    char zip_name[40];
     uint8_t file[20];
-    string pw;
-    ifstream dict_f;
-    uint32_t fget_16(FILE *f);
-    uint32_t fget_32(FILE *f);
-    bool get_next_pw();
-    bool check_pw();
     uint16_t truecrc;
 };
+
 #endif
